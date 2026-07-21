@@ -15,9 +15,13 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    quickshell = {
+      url = "github:quickshell-mirror/quickshell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, sops-nix, home-manager, ... } @ inputs:
+  outputs = { self, nixpkgs, sops-nix, home-manager, quickshell, ... } @ inputs:
     let
       system = "x86_64-linux";
       pkgs = import nixpkgs { inherit system; config.allowUnfree = true; };
@@ -30,7 +34,7 @@
 	  home-manager.nixosModules.home-manager {
 	    home-manager.useGlobalPkgs = true;
 	    home-manager.useUserPackages = true;
-	    home-manager.extraSpecialArgs = { inherit inputs; };
+	    home-manager.extraSpecialArgs = { inherit inputs; inherit quickshell; };
 	    home-manager.users.tem = ./home.nix;
 	  }
 	];

@@ -101,7 +101,6 @@
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
   
-  
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   services = {
@@ -110,6 +109,7 @@
       authKeyFile = "/run/secrets/tailscale";
     };
   };
+
   environment.systemPackages = with pkgs; [
     telegram-desktop
     vesktop
@@ -121,8 +121,20 @@
     neovim
     steam
     sops
+    anki
   ];
+  programs.hyprland = {
+    enable = true;
+    withUWSM = true; # Generates the hyprland-uwsm.desktop entry for display managers
+  };
+  programs.fish.enable = true;
+  users.extraUsers.tem = {
+    shell = pkgs.fish;
+  };
 
+  #fonts.packages = with pkgs; [
+  #  nerd-fonts.symbols-only
+  #];
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
@@ -172,6 +184,7 @@
   # === END OF NVIDIA CONFIGURATION ===
   services.xserver.xkb.options = "ctrl:nocaps";
   console.useXkbConfig = true;
+  services.libinput.touchpad.naturalScrolling = true;
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 }

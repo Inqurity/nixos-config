@@ -26,6 +26,7 @@ hl.window_rule({match = {title = "^(.*)(wants to save)$" },                  cen
 hl.window_rule({match = {title = "^(.*)(wants to save)$" },                  float = true})
 hl.window_rule({match = {title = "^(.*)(wants to open)$" },                  center = true})
 hl.window_rule({match = {title = "^(.*)(wants to open)$" },                  float = true})
+hl.window_rule({match = {title = "Bitwarden" },                              float = true, center = true})
 hl.window_rule({match = {class = "^(blueberry\\.py)$" },                     float = true})
 hl.window_rule({match = {class = "^(guifetch)$" },                           float = true}) -- FlafyDev/guifetch
 hl.window_rule({match = {class = "^(pavucontrol)$" },                        float = true})

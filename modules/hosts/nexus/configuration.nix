@@ -82,7 +82,7 @@
 
     # Enable the X11 windowing system.
     # You can disable this if you're only using the Wayland session.
-    services.xserver.enable = true;
+    # services.xserver.enable = true;
 
     # Enable KDE Plasma Desktop Environment.
     services.displayManager.sddm.enable = true;
@@ -117,7 +117,7 @@
     users.users."tem" = {
       isNormalUser = true;
       description = "tem";
-      extraGroups = [ "networkmanager" "wheel" ];
+      extraGroups = [ "networkmanager" "wheel" "scanner" "lp" ];
       packages = with pkgs; [
         # kdePackages.kate
         # thunderbird
@@ -185,25 +185,47 @@
     system.stateVersion = "26.05"; # Did you read the comment?
 
     # === NVIDIA CONFIGURATION FOR LAPTOP ===
-    hardware.graphics = {
-      enable = true;
-      enable32Bit = true;
-    };
+		#   hardware.graphics = {
+		#     enable = true;
+		#     enable32Bit = true;
+		#   };
+		#
+		#   services.xserver.videoDrivers = [ "modesetting" "nvidia" ];
+		#
+		#   hardware.nvidia = {
+		#     modesetting.enable = true;
+		#     nvidiaSettings = true;
+		#     open = true;
+		#     # package = config.boot.kernelPackages.nvidiaPackages.stable;
+		#
+		#     prime = {
+		#       # sync.enable = true; # The stable solution
+		# offload = {
+		#     	  enable = true;
+		#     	  enableOffloadCmd = true;
+		#   	};
+		#
+		#       intelBusId = "PCI:0:2:0";
+		#       nvidiaBusId = "PCI:1:0:0";
+		#     };
+		#   };
 
-    services.xserver.videoDrivers = [ "nvidia" ];
+	   boot.extraModprobeConfig = ''
+	     blacklist nouveau
+	     options nouveau modeset=0
+	   '';
 
-    hardware.nvidia = {
-      modesetting.enable = true;
-      nvidiaSettings = true;
-      open = false;
-      # package = config.boot.kernelPackages.nvidiaPackages.stable;
-
-      prime = {
-        sync.enable = true; # The stable solution
-        intelBusId = "PCI:0:2:0";
-        nvidiaBusId = "PCI:1:0:0";
-      };
-    };
+	   services.udev.extraRules = ''
+	     # Remove NVIDIA USB xHCI Host Controller devices, if present
+	     ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x0c0330", ATTR{power/control}="auto", ATTR{remove}="1"
+	     # Remove NVIDIA USB Type-C UCSI devices, if present
+	     ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x0c8000", ATTR{power/control}="auto", ATTR{remove}="1"
+	     # Remove NVIDIA Audio devices, if present
+	     ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x040300", ATTR{power/control}="auto", ATTR{remove}="1"
+	     # Remove NVIDIA VGA/3D controller devices
+	     ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x03[0-9]*", ATTR{power/control}="auto", ATTR{remove}="1"
+	   '';
+	   boot.blacklistedKernelModules = [ "nouveau" "nvidia" "nvidia_drm" "nvidia_modeset" ];
     # === END OF NVIDIA CONFIGURATION ===
 
     services.xserver.xkb.options = "ctrl:nocaps";
@@ -217,6 +239,30 @@
         Experimental = true;
       };
     };
+
+    # laptop
+    
+    # powerManagement.enable = true;
+    # services.thermald.enable = true;
+    # services.tlp = {
+    #   enable = true;
+    #   settings = {
+    # 	CPU_SCALING_GOVERNOR_ON_AC = "performance";
+    # 	CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
+    #
+    # 	CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
+    # 	CPU_ENERGY_PERF_POLICY_ON_AC = "performance";
+    #
+    # 	CPU_MIN_PERF_ON_AC = 0;
+    # 	CPU_MAX_PERF_ON_AC = 100;
+    # 	CPU_MIN_PERF_ON_BAT = 0;
+    # 	CPU_MAX_PERF_ON_BAT = 20;
+    #
+    # 	# Optional helps save long term battery health
+    #     START_CHARGE_THRESH_BAT0 = 40; # 40 and below it starts to charge
+    #     STOP_CHARGE_THRESH_BAT0 = 80;  # 80 and above it stops charging
+    #   };
+    # };
 
     nix.settings.experimental-features = [ "nix-command" "flakes" ];
 

@@ -12,7 +12,8 @@ SCHEMES = [
     "scheme-monochrome",
     "scheme-neutral",
     "scheme-rainbow",
-    "scheme-tonal-spot"
+    "scheme-tonal-spot",
+    "scheme-vibrant"
 ]
 
 def image_colorfulness(image):

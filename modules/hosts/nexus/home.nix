@@ -42,14 +42,19 @@
     home.packages = with pkgs; [                               
       # my shit
       git
+      godot3
       btop
       fastfetch
       vlc
       unrar
       noctalia-shell
+      obs-studio
+      libreoffice
+      amberol
+
+      cliphist
       python314Packages.kde-material-you-colors
       kdePackages.knewstuff
-      
       ntfs3g
       udiskie
       grim
@@ -96,14 +101,12 @@
       kdePackages.dolphin
       kdePackages.systemsettings
       kdePackages.kdialog
-
       uv
       gtk4
       libadwaita
       libsoup_3
       libportal-gtk4
       gobject-introspection
-      hyprshot
       slurp
       swappy
       tesseract
@@ -119,7 +122,6 @@
       translate-shell
       wlogout
       libqalculate
-      noctalia-shell
     ] ++ [
       #(config.lib.nixGL.wrap pkgs.hyprland)
   

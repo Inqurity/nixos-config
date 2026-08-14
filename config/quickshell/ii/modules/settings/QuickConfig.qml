@@ -182,7 +182,11 @@ ContentPage {
                 {
                     "value": "scheme-tonal-spot",
                     "displayName": Translation.tr("Tonal Spot")
-                }
+	        },
+                {
+        	    "value": "scheme-vibrant",
+		    "displayName": "Vibrant"
+		}
             ]
         }
 

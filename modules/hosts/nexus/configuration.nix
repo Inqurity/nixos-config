@@ -4,6 +4,7 @@
     modules = [
       self.nixosModules.nexusModule
       self.nixosModules.myHomeManager
+      inputs.nixos-hardware.nixosModules.asus-fx506hm
 
       inputs.qylock.nixosModules.default ({ pkgs, ... }: {
         services.displayManager.sddm.enable = true;
@@ -34,7 +35,7 @@
 
   # This is your configuration.nix, a place where you configure your system
   # You can place it in a separate file.
-  flake.nixosModules.nexusModule = { pkgs, ... }: {
+  flake.nixosModules.nexusModule = { pkgs, config, ... }: {
     imports = [
       # Include the results of the hardware scan.
       inputs.sops-nix.nixosModules.sops
@@ -83,10 +84,33 @@
     # Enable the X11 windowing system.
     # You can disable this if you're only using the Wayland session.
     # services.xserver.enable = true;
+		
+    #obs virtual cam
+    boot.extraModulePackages = with config.boot.kernelPackages; [
+      v4l2loopback.out
+    ];
+
+    boot.kernelModules = [
+      "v4l2loopback"
+    ];
+
+    boot.extraModprobeConfig = ''
+      options v4l2loopback exclusive_caps=1 card_label="Virtual Camera"
+    '';
 
     # Enable KDE Plasma Desktop Environment.
     services.displayManager.sddm.enable = true;
     services.desktopManager.plasma6.enable = true;
+    environment.plasma6.excludePackages = with pkgs.kdePackages; [ 
+      discover
+      elisa
+      spectacle
+      kwin
+      kwin-x11
+      konsole
+      plasma-desktop
+      plasma-workspace
+    ]; 
 
     # Configure keymap in X11
     services.xserver.xkb = {
@@ -95,7 +119,7 @@
     };
 
     # Enable CUPS to print documents.
-    services.printing.enable = true;
+    # services.printing.enable = true;
     services.blueman.enable = true;
 
     # Enable sound with pipewire.
@@ -117,7 +141,7 @@
     users.users."tem" = {
       isNormalUser = true;
       description = "tem";
-      extraGroups = [ "networkmanager" "wheel" "scanner" "lp" ];
+      extraGroups = [ "networkmanager" "wheel" "libvirtd" "cdemu" "cdrom" ];
       packages = with pkgs; [
         # kdePackages.kate
         # thunderbird
@@ -136,12 +160,22 @@
         enable = true;
         authKeyFile = "/run/secrets/tailscale";
       };
+      asusd.enable = true;
+      cloudflare-warp.enable = true;
+    };
+
+    hardware.asus.battery = {
+      chargeUpto             = 80;   # Maximum level of charge for your battery, as a percentage.
+      enableChargeUptoScript = true; # Whether to add charge-upto to environment.systemPackages. `charge-upto 85` temporarily sets the charge limit to 85%.
     };
 
     environment.systemPackages = with pkgs; [
+      gcc
+      gnumake
       telegram-desktop
       vesktop
       wine64
+      wine
       viber
       zed-editor
       steam
@@ -149,7 +183,14 @@
       neovim
       sops
       anki
+      asusctl
+      ffmpeg
     ];
+
+    programs.virt-manager.enable = true;
+    users.groups.libvirtd.members = ["tem"];
+    virtualisation.libvirtd.enable = true;
+    virtualisation.spiceUSBRedirection.enable = true;
 
     programs.hyprland = {
       enable = true;
@@ -157,6 +198,8 @@
     };
 
     programs.fish.enable = true;
+
+    programs.cdemu.enable = true;
 
     users.extraUsers.tem = {
       shell = pkgs.fish;
@@ -185,11 +228,11 @@
     system.stateVersion = "26.05"; # Did you read the comment?
 
     # === NVIDIA CONFIGURATION FOR LAPTOP ===
-		#   hardware.graphics = {
-		#     enable = true;
-		#     enable32Bit = true;
-		#   };
-		#
+		  hardware.graphics = {
+		    enable = true;
+		    enable32Bit = true;
+		  };
+
 		#   services.xserver.videoDrivers = [ "modesetting" "nvidia" ];
 		#
 		#   hardware.nvidia = {
@@ -209,23 +252,23 @@
 		#       nvidiaBusId = "PCI:1:0:0";
 		#     };
 		#   };
-
-	   boot.extraModprobeConfig = ''
-	     blacklist nouveau
-	     options nouveau modeset=0
-	   '';
-
-	   services.udev.extraRules = ''
-	     # Remove NVIDIA USB xHCI Host Controller devices, if present
-	     ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x0c0330", ATTR{power/control}="auto", ATTR{remove}="1"
-	     # Remove NVIDIA USB Type-C UCSI devices, if present
-	     ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x0c8000", ATTR{power/control}="auto", ATTR{remove}="1"
-	     # Remove NVIDIA Audio devices, if present
-	     ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x040300", ATTR{power/control}="auto", ATTR{remove}="1"
-	     # Remove NVIDIA VGA/3D controller devices
-	     ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x03[0-9]*", ATTR{power/control}="auto", ATTR{remove}="1"
-	   '';
-	   boot.blacklistedKernelModules = [ "nouveau" "nvidia" "nvidia_drm" "nvidia_modeset" ];
+		#
+		#   boot.extraModprobeConfig = ''
+		#     blacklist nouveau
+		#     options nouveau modeset=0
+		#   '';
+		#
+		#   services.udev.extraRules = ''
+		#     # Remove NVIDIA USB xHCI Host Controller devices, if present
+		#     ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x0c0330", ATTR{power/control}="auto", ATTR{remove}="1"
+		#     # Remove NVIDIA USB Type-C UCSI devices, if present
+		#     ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x0c8000", ATTR{power/control}="auto", ATTR{remove}="1"
+		#     # Remove NVIDIA Audio devices, if present
+		#     ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x040300", ATTR{power/control}="auto", ATTR{remove}="1"
+		#     # Remove NVIDIA VGA/3D controller devices
+		#     ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x03[0-9]*", ATTR{power/control}="auto", ATTR{remove}="1"
+		#   '';
+		#   boot.blacklistedKernelModules = [ "nouveau" "nvidia" "nvidia_drm" "nvidia_modeset" ];
     # === END OF NVIDIA CONFIGURATION ===
 
     services.xserver.xkb.options = "ctrl:nocaps";

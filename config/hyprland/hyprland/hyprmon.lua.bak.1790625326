@@ -1,0 +1,2 @@
+-- hyprmon: managed monitor profile include
+require("hyprmon")

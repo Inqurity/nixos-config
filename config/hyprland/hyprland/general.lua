@@ -256,7 +256,7 @@ hl.config({
     input = {
         kb_layout  = "us,ua",
 	kb_variant = "colemak_dh,",
-	kb_options = "grp:win_space_toggle,ctrl:nocaps",
+	kb_options = "ctrl:nocaps",
         numlock_by_default = true,
         repeat_delay = 250,
         repeat_rate = 35,

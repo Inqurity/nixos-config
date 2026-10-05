@@ -31,7 +31,8 @@ handle_kde_material_you_colors() {
             kde_scheme_variant="scheme-tonal-spot" # default
             ;;
     esac
-    "$XDG_CONFIG_HOME"/matugen/templates/kde/kde-material-you-colors-wrapper.sh --scheme-variant "$kde_scheme_variant"
+    #"$XDG_CONFIG_HOME"/matugen/templates/kde/kde-material-you-colors-wrapper.sh --scheme-variant "$kde_scheme_variant"
+    plasma-apply-colorscheme Darkly; plasma-apply-colorscheme Matugen
 }
 
 pre_process() {
@@ -72,30 +73,6 @@ check_and_prompt_upscale() {
         else
             img_width=$(identify -format "%w" "$img" 2>/dev/null)
             img_height=$(identify -format "%h" "$img" 2>/dev/null)
-        fi
-        if [[ "$img_width" -lt "$min_width_desired" || "$img_height" -lt "$min_height_desired" ]]; then
-            action=$(notify-send "Upscale?" \
-                "Image resolution (${img_width}x${img_height}) is lower than screen resolution (${min_width_desired}x${min_height_desired})" \
-                -A "open_upscayl=Open Upscayl"\
-                -a "Wallpaper switcher")
-            if [[ "$action" == "open_upscayl" ]]; then
-                if command -v upscayl &>/dev/null; then
-                    nohup upscayl > /dev/null 2>&1 &
-                else
-                    action2=$(notify-send \
-                        -a "Wallpaper switcher" \
-                        -c "im.error" \
-                        -A "install_upscayl=Install Upscayl (Arch)" \
-                        "Install Upscayl?" \
-                        "yay -S upscayl-bin")
-                    if [[ "$action2" == "install_upscayl" ]]; then
-                        kitty -1 yay -S upscayl-bin
-                        if command -v upscayl &>/dev/null; then
-                            nohup upscayl > /dev/null 2>&1 &
-                        fi
-                    fi
-                fi
-            fi
         fi
     fi
 }

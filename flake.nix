@@ -26,9 +26,13 @@
       url = "github:Darkkal44/qylock";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nixos-hardware = {
+      url = "github:NixOS/nixos-hardware";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, flake-parts, sops-nix, home-manager, quickshell, qylock, ... } @ inputs: flake-parts.lib.mkFlake { inherit inputs; } (inputs.import-tree ./modules);/*: {
+  outputs = { self, nixpkgs, flake-parts, sops-nix, home-manager, quickshell, qylock, nixos-hardware, ... } @ inputs: flake-parts.lib.mkFlake { inherit inputs; } (inputs.import-tree ./modules);/*: {
     
     perSystem = { self', inputs', pkgs, system }: {
       packages = {

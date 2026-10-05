@@ -58,3 +58,11 @@ post_hook = 'pkill -USR2 btop || true'
 [templates.vesktop]
 input_path = '~/.config/matugen/templates/vesktop/vesktop-colors.conf'
 output_path = '~/.config/vesktop/themes/material-discord.css'
+
+[templates.obsidian]
+input_path = '~/.config/matugen/templates/obsidian/obsidian-colors.conf'
+output_path = '~/uni/.obsidian/snippets/obsidian-material3.css'
+
+# [templates.jetbrains]
+# input_path = '~/.config/matugen/templates/jetbrains/colors.conf'
+# output_path = '~/.config/JetBrains/matugen/colors.json'

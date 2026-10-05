@@ -41,20 +41,27 @@
   
     home.packages = with pkgs; [                               
       # my shit
+      ffmpeg
       git
       godot3
       btop
       fastfetch
       vlc
       unrar
-      noctalia-shell
       obs-studio
       libreoffice
       amberol
+      obsidian
+      steam-run
+      thunderbird
+      cloudflare-warp
+      zoom-us
+      jetbrains.clion
+      typst-live
+      qbittorrent
 
       cliphist
-      python314Packages.kde-material-you-colors
-      kdePackages.knewstuff
+      # kdePackages.knewstuff
       ntfs3g
       udiskie
       grim
@@ -62,7 +69,7 @@
       libnotify
       dbus
       xlsclients
-      kdePackages.kconfig
+      # kdePackages.kconfig
       lxqt.pavucontrol-qt
       wireplumber
       libdbusmenu-gtk3
@@ -99,7 +106,7 @@
       networkmanager
       kdePackages.plasma-nm
       kdePackages.dolphin
-      kdePackages.systemsettings
+      # kdePackages.systemsettings
       kdePackages.kdialog
       uv
       gtk4
@@ -131,13 +138,20 @@
       #nixGLWrap = config.lib.nixGL.wrap;
       })
       ];
-  
+
     programs.kitty = {
       enable = true;
       settings = {
         cursor_trail = 1;
 	include = "matugen-colors.conf";
 	window_padding_width = 16;
+      };
+    };
+
+    dconf.settings = {
+      "org/virt-manager/virt-manager/connections" = {
+        autoconnect = ["qemu:///system"];
+        uris = ["qemu:///system"];
       };
     };
 
@@ -164,7 +178,6 @@
   	#      );
   	#  };
     services.hyprpolkitagent.enable = true;
-  
     # This value determines the Home Manager release that your
     # configuration is compatible with. This helps avoid breakage
     # when a new Home Manager release introduces backwards

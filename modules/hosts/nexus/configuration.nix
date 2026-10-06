@@ -173,17 +173,13 @@
       gcc
       gnumake
       telegram-desktop
-      vesktop
-      wine64
-      wine
-      viber
-      zed-editor
+      vesktop	
+      wineWow64Packages.stable
       steam
       helium
       neovim
       sops
       anki
-      asusctl
       ffmpeg
     ];
 
